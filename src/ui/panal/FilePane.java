@@ -14,5 +14,5 @@ import java.awt.*;
 public class FilePane {
 
     private JPanel panel1;
-
+    private JSplitPane splitPane;
 }

@@ -11,10 +11,9 @@ public class Folder {
         this.folderName = folderName;
     }
 
-    public Folder(String folderName, String property, int diskNum, String path) {
+    public Folder(String folderName, int diskNum, String path) {
         this.folderName = folderName;
         this.type = "Folder";
-        this.property = property;
         this.diskNum = diskNum;
         this.path = path;
     }

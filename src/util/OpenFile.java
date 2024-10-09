@@ -2,33 +2,17 @@ package util;
 
 public class OpenFile {
     private int flag;   // 0为读，1为写
-    private String name;
-    private int number; // 文件起始盘块号
-    private int length; // 文件长度
+    private File file;
     private Pointer read;
     private Pointer write;
 
-    public OpenFile(int flag, String name, int number, int length) {
+    public OpenFile(int flag, File file) {
         this.flag = flag;
-        this.name = name;
-        this.number = number;
-        this.length = length;
+        this.file = file;
     }
 
     public int getFlag() {
         return flag;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public int getLength() {
-        return length;
     }
 
     public Pointer getRead() {
@@ -39,20 +23,16 @@ public class OpenFile {
         return write;
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     public void setFlag(int flag) {
         this.flag = flag;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
     }
 
     public void setRead(Pointer read) {

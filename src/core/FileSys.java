@@ -45,10 +45,10 @@ public class FileSys {
             return;
         }
         while (canCreate) {
-            for (int i = 0; i < fats.length; i++) {
-                if (fats[i] != null) {
-                    if (Objects.equals(fats[i].getType(), "File")) {
-                        File file = (File) fats[i].getObject();
+            for (FAT fat : fats) {
+                if (fat != null) {
+                    if (Objects.equals(fat.getType(), "File")) {
+                        File file = (File) fat.getObject();
                         if (file.getFileName().equals(fileName)) {
                             // 还未实现文件已存在的问题
                             System.out.println("文件已存在");
@@ -74,10 +74,10 @@ public class FileSys {
             return;
         }
         while (canCreate) {
-            for (int i = 0; i < fats.length; i++) {
-                if (fats[i] != null) {
-                    if (Objects.equals(fats[i].getType(), "Folder")) {
-                        Folder folder = (Folder) fats[i].getObject();
+            for (FAT fat : fats) {
+                if (fat != null) {
+                    if (fat.getType() == "Folder") {
+                        Folder folder = (Folder) fat.getObject();
                         if (folder.getFolderName().equals(folderName)) {
                             // 还未实现文件夹已存在的问题
                             System.out.println("文件夹已存在");
@@ -95,10 +95,8 @@ public class FileSys {
 
     // 打开文件
     public void openFile(FAT fat, int mode) {
-        OpenFile openFile = new OpenFile(mode, ((File)fat.getObject()).getFileName(), ((File)fat.getObject()).getDiskNum(),
-                ((File)fat.getObject()).getLength());
+        OpenFile openFile = new OpenFile(mode, (File) fat.getObject());
         openFiles.addFile(openFile);
-
     }
 
     // 返回某个路径下的所有文件和文件夹
@@ -133,6 +131,54 @@ public class FileSys {
         } else if (Objects.equals(fat.getType(), "Folder")) {
             Folder folder = (Folder) fat.getObject();
             fats[folder.getDiskNum()] = null;
+        }
+    }
+
+    // 查看文件是否被打开
+    public boolean isFileOpened(FAT fat) {
+        for (int i = 0; i < openFiles.getFiles().size(); i++) {
+            if (openFiles.getFiles().get(i).getFile() == fat.getObject()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // 关闭文件
+    public void closeFile(FAT fat) {
+        for (int i = 0; i < openFiles.getFiles().size(); i++) {
+            if (openFiles.getFiles().get(i).getFile() == fat.getObject()) {
+                openFiles.getFiles().remove(i);
+                break;
+            }
+        }
+    }
+
+    // 读文件
+    public String readFile(FAT fat) {
+        File file = (File) fat.getObject();
+        return file.getContent();
+    }
+
+    // 写文件
+    public void writeFile(FAT fat, String content) {
+        File file = (File) fat.getObject();
+        file.setContent(content);
+    }
+
+    // 保存时重新计算占据磁盘块数
+    public void modifyAfterSave(FAT fat, int num) {
+        int start = ((File)fat.getObject()).getDiskNum();
+        int index = fats[start].getIndex();
+        int oldNum = 1;
+        while (index != 255) {
+            oldNum++;
+            if (fats[index].getIndex() != 255) {
+                index = fats[index].getIndex();
+            } else {
+                start = index;
+            }
+
         }
     }
 }

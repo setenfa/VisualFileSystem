@@ -2,6 +2,8 @@ package core;
 
 import util.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static res.GlobalResources.*;
@@ -20,7 +22,7 @@ public class FileSys {
     public void initFats() {
         fats = new FAT[128];
         fats[0] = new FAT(0, "Disk", null);
-        fats[1] = new FAT(1, "Folder", new Disk("C:"));
+        fats[1] = new FAT(1, "Folder", new Disk("C"));
     }
 
     // 返回空闲磁盘块的序列号
@@ -100,22 +102,19 @@ public class FileSys {
     }
 
     // 返回某个路径下的所有文件和文件夹
-    public FAT[] getFilesAndFolders(String path) {
-        FAT[] filesAndFolders = new FAT[128];
-        int index = 0;
+    public List<FAT> getFilesAndFolders(String path) {
+        List<FAT> filesAndFolders = new ArrayList<>();
         for (FAT fat : fats) {
             if (fat != null) {
                 if (Objects.equals(fat.getType(), "File")) {
                     File file = (File) fat.getObject();
                     if (file.getPath().equals(path)) {
-                        filesAndFolders[index] = fat;
-                        index++;
+                        filesAndFolders.add(fat);
                     }
                 } else if (Objects.equals(fat.getType(), "Folder")) {
                     Folder folder = (Folder) fat.getObject();
                     if (folder.getPath().equals(path)) {
-                        filesAndFolders[index] = fat;
-                        index++;
+                        filesAndFolders.add(fat);
                     }
                 }
             }
@@ -178,8 +177,57 @@ public class FileSys {
             } else {
                 start = index;
             }
+        }
+        if (num > oldNum) {
+            if (getFreeBlockNum() < num - oldNum) {
+                System.out.println("磁盘空间不足");
+                return;
+            }
+            for (int i = 0; i < num - oldNum; i++) {
+                int freeBlock = getFreeBlock();
+                fats[start].setIndex(freeBlock);
+                start = freeBlock;
+            }
 
         }
+    }
+
+    // 获取磁盘空闲块的数目
+    public int getFreeBlockNum() {
+        int count = 0;
+        for (FAT fat : fats) {
+            if (fat.getIndex() == 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // 获取某个文件或文件夹所占的磁盘块数
+    public int getNumOfFile (FAT fat) {
+        File file = (File) fat.getObject();
+        int length = file.getLength();
+        if (length <= 64) {
+            return 1;
+        } else {
+            int num;
+            if (length % 64 == 0) {
+                num = length / 64;
+                return num;
+            } else {
+                num = length / 64;
+                num++;
+                return num;
+            }
+        }
+    }
+
+    public OpenFiles getOpenFiles() {
+        return openFiles;
+    }
+
+    public FAT[] getFats() {
+        return fats;
     }
 }
 

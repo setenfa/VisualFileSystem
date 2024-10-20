@@ -58,4 +58,7 @@ public class Folder {
         this.path = path;
     }
 
+    public String toString() {
+        return this.path;
+    }
 }

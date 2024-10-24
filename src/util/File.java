@@ -77,6 +77,6 @@ public class File {
 
     @Override
     public String toString() {
-        return this.path;
+        return fileName;
     }
 }

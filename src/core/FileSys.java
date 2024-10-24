@@ -21,15 +21,15 @@ public class FileSys {
 
     public void initFats() {
         fats = new FAT[128];
-        fats[0] = new FAT(0, "Disk", null);
-        fats[1] = new FAT(1, "Folder", new Disk("C"));
+        fats[0] = new FAT(255, "Disk", null);
+        fats[1] = new FAT(255, "Disk", new Disk("C"));
     }
 
     // 返回空闲磁盘块的序列号
     public int getFreeBlock() {
         for (int i = 0; i < fats.length; i++) {
             if (fats != null) {
-                if (fats[i].getIndex() == 0) {
+                if (fats[i] == null) {
                     return i;
                 }
             }
@@ -38,61 +38,47 @@ public class FileSys {
     }
 
     // 创建文件
-    public void createFile(String fileName, String property) {
+    public boolean createFile(String fileName, String property) {
         int diskNum = getFreeBlock();
-        boolean canCreate = true;
         String path = ((Folder)TREE.getCurrentNode().getUserObject()).getPath();
         if (diskNum == -1) {
-            System.out.println("磁盘已满");
-            return;
+            return false;
         }
-        while (canCreate) {
-            for (FAT fat : fats) {
-                if (fat != null) {
-                    if (Objects.equals(fat.getType(), "File")) {
-                        File file = (File) fat.getObject();
-                        if (file.getFileName().equals(fileName)) {
-                            // 还未实现文件已存在的问题
-                            System.out.println("文件已存在");
-                            canCreate = false;
-                            break;
-                        }
+        for (FAT fat : fats) {
+            if (fat != null) {
+                if (Objects.equals(fat.getType(), "File")) {
+                    File file = (File) fat.getObject();
+                    if ((file.getPath() + "\\" + fileName).equals(path + "\\" + fileName)) {
+                        return false;
                     }
                 }
             }
         }
-        if (canCreate) {
-            fats[diskNum] = new FAT(diskNum, "File", new File(fileName, diskNum, property, path));
-        }
+        fats[diskNum] = new FAT(diskNum, "File", new File(fileName, diskNum, property, path));
+        System.out.println(fats[diskNum].getType());
+        return true;
     }
 
     // 创建文件夹
-    public void createFolder(String folderName) {
+    public boolean createFolder(String folderName) {
         int diskNum = getFreeBlock();
-        boolean canCreate = true;
         String path = ((Folder)TREE.getCurrentNode().getUserObject()).getPath();
         if (diskNum == -1) {
-            System.out.println("磁盘已满");
-            return;
+            return false;
         }
-        while (canCreate) {
-            for (FAT fat : fats) {
-                if (fat != null) {
-                    if (fat.getType() == "Folder") {
-                        Folder folder = (Folder) fat.getObject();
-                        if (folder.getFolderName().equals(folderName)) {
-                            // 还未实现文件夹已存在的问题
-                            System.out.println("文件夹已存在");
-                            canCreate = false;
-                            break;
-                        }
+        for (FAT fat : fats) {
+            if (fat != null) {
+                if (Objects.equals(fat.getType(), "Folder")) {
+                    Folder folder = (Folder) fat.getObject();
+                    if ((folder.getPath() + "\\" + folder.getFolderName()).equals(path + "\\" + folderName)) {
+                        return false;
                     }
                 }
             }
         }
-        if (canCreate) {
-            fats[diskNum] = new FAT(diskNum, "Folder", new Folder(folderName, diskNum, path));
-        }
+        fats[diskNum] = new FAT(diskNum, "Folder", new Folder(folderName, diskNum, path));
+        TREE.addNode(TREE.getCurrentNode(), folderName);
+        return true;
     }
 
     // 打开文件
@@ -220,6 +206,24 @@ public class FileSys {
                 return num;
             }
         }
+    }
+
+    public boolean isFileOrFolderExist(String path, String fileOrFolderName) {
+        List<FAT> fileList = getFilesAndFolders(path);
+        for (FAT fat : fileList) {
+            if (Objects.equals(fat.getType(), "File")) {
+                File file = (File) fat.getObject();
+                if (Objects.equals(file.getFileName(), fileOrFolderName)) {
+                    return true;
+                }
+            } else if (Objects.equals(fat.getType(), "Folder")) {
+                Folder folder = (Folder) fat.getObject();
+                if (Objects.equals(folder.getFolderName(), fileOrFolderName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public OpenFiles getOpenFiles() {

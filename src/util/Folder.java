@@ -59,6 +59,6 @@ public class Folder {
     }
 
     public String toString() {
-        return this.path;
+        return folderName;
     }
 }

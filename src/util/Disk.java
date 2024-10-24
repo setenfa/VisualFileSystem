@@ -15,4 +15,7 @@ public class Disk {
         this.diskName = diskName;
     }
 
+    public String toString(){
+        return diskName;
+    }
 }

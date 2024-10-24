@@ -9,7 +9,6 @@ public class FAT {
         this.index = index;
         this.type = type;
         this.object = object;
-
     }
 
     public int getIndex() {

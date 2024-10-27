@@ -6,6 +6,7 @@ import ui.windows.FileViewFlame;
 import util.FAT;
 import util.File;
 import util.Folder;
+import util.ui.CustomFlowLayout;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,13 +17,15 @@ import java.util.List;
 
 import static res.GlobalResources.FILESYS;
 import static res.GlobalResources.TREE;
+import static res.GlobalResources.FILE_ICON;
+import static res.GlobalResources.FOLDER_ICON;
 
 public class FileView {
     private JPanel fileViewPane;
-    private JPopupMenu jPopupMenu;
+    private final JPopupMenu jPopupMenu;
     private JPopupMenu panelMenu;
     private JScrollPane scrollPane;
-    private List<PathChangeListener> listeners;
+    private final List<PathChangeListener> listeners;
 
     public FileView(JPopupMenu jPopupMenu) {
         this.jPopupMenu = jPopupMenu;
@@ -32,8 +35,12 @@ public class FileView {
     }
 
     public void initFileViewPane() {
-        fileViewPane = new JPanel();
-        fileViewPane.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        fileViewPane = new JPanel(new CustomFlowLayout(FlowLayout.LEFT, 17, 10)) {
+            @Override
+            public Insets getInsets() {
+                return new Insets(10, 0, 10, 0);
+            }
+        };
         fileViewPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -52,11 +59,18 @@ public class FileView {
             if (fat != null) {
                 if (fat.getObject() instanceof File file) {
                     label = new JLabel(file.getFileName());
-                    System.out.println(file.getFileName());
+                    if (FILE_ICON != null) {
+                        label.setIcon(FILE_ICON);
+                    } else {
+                        System.out.println("FILE_ICON is null");
+                    }
                 } else {
                     Folder folder = (Folder) fat.getObject();
                     label = new JLabel(folder.getFolderName());
+                    label.setIcon(FOLDER_ICON);
                 }
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
                 JLabel finalLabel = label;
                 label.addMouseListener(new MouseAdapter() {
                     @Override
@@ -78,7 +92,8 @@ public class FileView {
                                     } else {
                                         FILESYS.openFile(fat, 1);
                                         // 文件的frame还未实现
-                                        new FileViewFlame((File) fat.getObject(), 0);
+                                        File file = (File) fat.getObject();
+                                        new FileViewFlame(fat, file.getProperty());
                                     }
                                 }
                             }
@@ -197,10 +212,6 @@ public class FileView {
 
     public void addPathChangeListener(PathChangeListener listener) {
         listeners.add(listener);
-    }
-
-    public void removePathChangeListener(PathChangeListener listener) {
-        listeners.remove(listener);
     }
 
     private void firePathChangeEvent(String newPath) {

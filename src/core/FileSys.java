@@ -48,14 +48,13 @@ public class FileSys {
             if (fat != null) {
                 if (Objects.equals(fat.getType(), "File")) {
                     File file = (File) fat.getObject();
-                    if ((file.getPath() + "\\" + fileName).equals(path + "\\" + fileName)) {
+                    if ((file.getPath() + "\\" + file.getFileName()).equals(path + "\\" + fileName)) {
                         return false;
                     }
                 }
             }
         }
-        fats[diskNum] = new FAT(diskNum, "File", new File(fileName, diskNum, property, path));
-        System.out.println(fats[diskNum].getType());
+        fats[diskNum] = new FAT(255, "File", new File(fileName, diskNum, property, path));
         return true;
     }
 
@@ -76,7 +75,7 @@ public class FileSys {
                 }
             }
         }
-        fats[diskNum] = new FAT(diskNum, "Folder", new Folder(folderName, diskNum, path));
+        fats[diskNum] = new FAT(255, "Folder", new Folder(folderName, diskNum, path));
         TREE.addNode(TREE.getCurrentNode(), folderName);
         return true;
     }
@@ -123,6 +122,8 @@ public class FileSys {
     public boolean isFileOpened(FAT fat) {
         for (int i = 0; i < openFiles.getFiles().size(); i++) {
             if (openFiles.getFiles().get(i).getFile() == fat.getObject()) {
+                File file = (File) fat.getObject();
+                System.out.println(file.getFileName());
                 return true;
             }
         }
@@ -166,7 +167,6 @@ public class FileSys {
         }
         if (num > oldNum) {
             if (getFreeBlockNum() < num - oldNum) {
-                System.out.println("磁盘空间不足");
                 return;
             }
             for (int i = 0; i < num - oldNum; i++) {

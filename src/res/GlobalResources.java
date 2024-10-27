@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class GlobalResources {
-    public static final File FILE1 = new File("C:\\Users\\yiyi\\IdeaProjects\\VisualFileSystem\\src\\res\\provide icon.txt");
-    public static final File FILE2 = new File("C:\\Users\\yiyi\\IdeaProjects\\VisualFileSystem\\src\\res\\provide icon");
+    public static final File FILE1 = new File("src/res/provide icon/provide icon.txt");
+    public static final File FILE2 = new File("src/res/provide icon");
     public static Icon FILE_ICON;
     public static Icon FOLDER_ICON;
     public static final FileSystemView FILE_SYSTEM_VIEW = FileSystemView.getFileSystemView();
@@ -38,4 +38,6 @@ public class GlobalResources {
         }
         return icon;
     }
+
+
 }

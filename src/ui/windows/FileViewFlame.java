@@ -39,10 +39,14 @@ public class FileViewFlame extends JFrame {
         JMenuItem closeItem = new JMenuItem("关闭");
         JMenuItem writeItem = new JMenuItem("可写");
         saveItem.addActionListener(e -> {
-            if (isModified) {
-                ((File)fat.getObject()).setContent(textArea.getText());
-                FILESYS.modifyAfterSave(fat, FILESYS.getNumOfFile(fat));
+            if (FILESYS.modifyAfterSave(fat, FILESYS.getNumOfFile(fat))) {
+                File file = (File)fat.getObject();
+                file.setContent(textArea.getText());
+                file.setLength(textArea.getText().length());
+                isSaved = true;
                 isModified = false;
+            } else {
+                JOptionPane.showMessageDialog(null, "磁盘空间不足，保存失败", "错误", JOptionPane.ERROR_MESSAGE);
             }
         });
         closeItem.addActionListener(e -> this.dispose());
@@ -104,9 +108,14 @@ public class FileViewFlame extends JFrame {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (isSaved) {
-                    File file = (File)fat.getObject();
-                    file.setContent(textArea.getText());
-                    FILESYS.modifyAfterSave(fat, FILESYS.getNumOfFile(fat));
+                    if (FILESYS.modifyAfterSave(fat, FILESYS.getNumOfFile(fat))) {
+                        File file = (File)fat.getObject();
+                        file.setContent(textArea.getText());
+                        file.setLength(textArea.getText().length());
+                        FILESYS.closeFile(fat);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "磁盘空间不足，保存失败", "错误", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
                 FILESYS.closeFile(fat);
             }

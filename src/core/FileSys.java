@@ -153,28 +153,36 @@ public class FileSys {
     }
 
     // 保存时重新计算占据磁盘块数
-    public void modifyAfterSave(FAT fat, int num) {
+    public boolean modifyAfterSave(FAT fat, int num) {
         int start = ((File)fat.getObject()).getDiskNum();
         int index = fats[start].getIndex();
         int oldNum = 1;
         while (index != 255) {
             oldNum++;
-            if (fats[index].getIndex() != 255) {
-                index = fats[index].getIndex();
-            } else {
+            if (fats[index].getIndex() == 255) {
                 start = index;
             }
+            index = fats[index].getIndex();
         }
         if (num > oldNum) {
             if (getFreeBlockNum() < num - oldNum) {
-                return;
+                return false;
             }
+            int newStart = getFreeBlock();
+            fats[start].setIndex(newStart);
             for (int i = 0; i < num - oldNum; i++) {
-                int freeBlock = getFreeBlock();
-                fats[start].setIndex(freeBlock);
-                start = freeBlock;
+                newStart = getFreeBlock();
+                if (i == num - oldNum - 1) {
+                    fats[newStart] = new FAT(255, "File", fat.getObject());
+                } else {
+                    fats[newStart] = new FAT(0, "File", fat.getObject());
+                    int newStart1 = getFreeBlock();
+                    fats[newStart].setIndex(newStart1);
+                }
             }
-
+            return true;
+        } else {
+            return true;
         }
     }
 
@@ -182,7 +190,7 @@ public class FileSys {
     public int getFreeBlockNum() {
         int count = 0;
         for (FAT fat : fats) {
-            if (fat.getIndex() == 0) {
+            if (fat == null) {
                 count++;
             }
         }

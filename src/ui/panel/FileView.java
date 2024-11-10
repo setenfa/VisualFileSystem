@@ -3,6 +3,7 @@ package ui.panel;
 import event.PathChangeEvent;
 import event.PathChangeListener;
 import ui.windows.FileViewFlame;
+import ui.windows.PropertyShow;
 import util.FAT;
 import util.File;
 import util.Folder;
@@ -101,8 +102,13 @@ public class FileView {
                             jPopupMenu.removeAll();
                             JMenuItem delete = getDeleteItem(fat);
                             JMenuItem rename = getRenameItem(fat);
+                            JMenuItem check = new JMenuItem("属性");
+                            check.addActionListener(e1 -> {
+                                new PropertyShow(fileViewPane, fat);
+                            });
                             jPopupMenu.add(delete);
                             jPopupMenu.add(rename);
+                            jPopupMenu.add(check);
                             jPopupMenu.show(finalLabel, e.getX(), e.getY());
                         }
                     }

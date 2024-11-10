@@ -102,13 +102,13 @@ public class FileView {
                             jPopupMenu.removeAll();
                             JMenuItem delete = getDeleteItem(fat);
                             JMenuItem rename = getRenameItem(fat);
-                            JMenuItem check = new JMenuItem("属性");
-                            check.addActionListener(e1 -> {
-                                new PropertyShow(fileViewPane, fat);
-                            });
                             jPopupMenu.add(delete);
                             jPopupMenu.add(rename);
-                            jPopupMenu.add(check);
+                            if (fat.getObject() instanceof File) {
+                                JMenuItem check = new JMenuItem("属性");
+                                check.addActionListener(e1 -> new PropertyShow(fileViewPane, fat));
+                                jPopupMenu.add(check);
+                            }
                             jPopupMenu.show(finalLabel, e.getX(), e.getY());
                         }
                     }

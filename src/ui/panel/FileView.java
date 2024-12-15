@@ -92,7 +92,6 @@ public class FileView {
                                         JOptionPane.showMessageDialog(null, "文件已被打开");
                                     } else {
                                         FILESYS.openFile(fat, 1);
-                                        // 文件的frame还未实现
                                         File file = (File) fat.getObject();
                                         new FileViewFlame(fat, file.getProperty());
                                     }
@@ -162,7 +161,10 @@ public class FileView {
                         JOptionPane.showMessageDialog(null, "文件夹已存在");
                         return;
                     } else {
-                        ((Folder) fat.getObject()).setFolderName(folderName);
+                        Folder folder = (Folder) fat.getObject();
+                        String path = folder.getPath() + "\\" + folder.getFolderName();
+                        TREE.renameNode(TREE.getCurrentNode(), path, folderName);
+                        folder.setFolderName(folderName);
                     }
                 }
             }

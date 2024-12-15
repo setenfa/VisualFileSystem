@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import static res.GlobalResources.FILESYS;
-
 public class Tree {
     private DefaultTreeModel treeModel;
     private DefaultMutableTreeNode currentNode;
@@ -35,11 +33,22 @@ public class Tree {
         DefaultMutableTreeNode searchNode = getChildNodeByPathRecursive(currentNode, path);
         if (searchNode == null) {
             JOptionPane.showMessageDialog(null, "文件夹不存在");
-            return;
         } else {
             DefaultMutableTreeNode parent = (DefaultMutableTreeNode) searchNode.getParent();
             parent.remove(searchNode);
             treeModel.reload(parent);
+        }
+    }
+    // 重命名文件夹时调用，更新树
+    public void renameNode(DefaultMutableTreeNode currentNode, String path, String newName) {
+        DefaultMutableTreeNode searchNode = getChildNodeByPathRecursive(currentNode, path);
+        if (searchNode == null) {
+            JOptionPane.showMessageDialog(null, "文件夹不存在");
+        } else {
+            Folder folder = (Folder) searchNode.getUserObject();
+            folder.setFolderName(newName);
+            folder.setPath(folder.getPath().substring(0, folder.getPath().lastIndexOf("\\") + 1) + newName);
+            treeModel.reload(searchNode);
         }
     }
 

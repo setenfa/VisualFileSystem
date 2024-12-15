@@ -14,6 +14,7 @@ public class GlobalResources {
     public static final File FILE2 = new File("src/res/provide icon");
     public static Icon FILE_ICON;
     public static Icon FOLDER_ICON;
+    public static Icon FOLDER_ICON_ORIGINAL;
     public static final FileSystemView FILE_SYSTEM_VIEW = FileSystemView.getFileSystemView();
     public static final Tree TREE;
     public static final FileSys FILESYS;
@@ -22,8 +23,8 @@ public class GlobalResources {
         FILESYS = new FileSys();
         FILE_ICON = FILE_SYSTEM_VIEW.getSystemIcon(FILE1);
         FILE_ICON = getScaledIcon(FILE_ICON, 50);
-        FOLDER_ICON = FILE_SYSTEM_VIEW.getSystemIcon(FILE2);
-        FOLDER_ICON = getScaledIcon(FOLDER_ICON, 50);
+        FOLDER_ICON_ORIGINAL = FILE_SYSTEM_VIEW.getSystemIcon(FILE2);
+        FOLDER_ICON = getScaledIcon(FOLDER_ICON_ORIGINAL, 50);
     }
 
     private static Icon getScaledIcon(Icon icon, int scale) {

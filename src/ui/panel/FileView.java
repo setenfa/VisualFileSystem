@@ -95,6 +95,8 @@ public class FileView {
                                         File file = (File) fat.getObject();
                                         new FileViewFlame(fat, file.getProperty());
                                     }
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "打开文件已上限");
                                 }
                             }
                         } else if (e.getButton() == MouseEvent.BUTTON3) {

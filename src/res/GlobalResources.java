@@ -1,6 +1,7 @@
 package res;
 
 import core.FileSys;
+import ui.windows.Main;
 import util.Tree;
 
 import javax.swing.*;
@@ -10,8 +11,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class GlobalResources {
-    public static final File FILE1 = new File("src/res/provide icon/provide icon.txt");
-    public static final File FILE2 = new File("src/res/provide icon");
+    public static final File FILE1;
+    public static final File FILE2;
     public static Icon FILE_ICON;
     public static Icon FOLDER_ICON;
     public static Icon FOLDER_ICON_ORIGINAL;
@@ -19,6 +20,8 @@ public class GlobalResources {
     public static final Tree TREE;
     public static final FileSys FILESYS;
     static {
+        FILE1 = new File(Main.class.getClassLoader().getResource("res/provideIcon/provideIcon.txt").getFile());
+        FILE2 = new File(Main.class.getClassLoader().getResource("res/provideIcon").getFile());
         TREE = new Tree();
         FILESYS = new FileSys();
         FILE_ICON = FILE_SYSTEM_VIEW.getSystemIcon(FILE1);

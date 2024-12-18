@@ -27,13 +27,7 @@ public class FilePane {
             @Override
             public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
                                                           boolean leaf, int row, boolean hasFocus) {
-                JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-                Folder folderNode = (Folder) node.getUserObject();
-                if (folderNode == null) {
-                    return label;
-                }
-                label.setIcon(FOLDER_ICON_ORIGINAL);
+                JLabel label = new JLabel(value.toString());
                 return label;
             }
         });

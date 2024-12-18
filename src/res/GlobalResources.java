@@ -4,29 +4,27 @@ import core.FileSys;
 import ui.windows.Main;
 import util.Tree;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class GlobalResources {
-    public static final File FILE1;
-    public static final File FILE2;
     public static Icon FILE_ICON;
     public static Icon FOLDER_ICON;
     public static Icon FOLDER_ICON_ORIGINAL;
-    public static final FileSystemView FILE_SYSTEM_VIEW = FileSystemView.getFileSystemView();
     public static final Tree TREE;
     public static final FileSys FILESYS;
     static {
-        FILE1 = new File(Main.class.getClassLoader().getResource("res/provideIcon/provideIcon.txt").getFile());
-        FILE2 = new File(Main.class.getClassLoader().getResource("res/provideIcon").getFile());
         TREE = new Tree();
         FILESYS = new FileSys();
-        FILE_ICON = FILE_SYSTEM_VIEW.getSystemIcon(FILE1);
+        FILE_ICON = loadIconFromResource("res/provideIcon/file.png");
         FILE_ICON = getScaledIcon(FILE_ICON, 50);
-        FOLDER_ICON_ORIGINAL = FILE_SYSTEM_VIEW.getSystemIcon(FILE2);
+        FOLDER_ICON_ORIGINAL = loadIconFromResource("res/provideIcon/folder.png");
         FOLDER_ICON = getScaledIcon(FOLDER_ICON_ORIGINAL, 50);
     }
 
@@ -43,5 +41,19 @@ public class GlobalResources {
         return icon;
     }
 
+    private static Icon loadIconFromResource(String path) {
+        try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream(path)) {
+            if (inputStream != null) {
+                // 使用 ImageIO 读取图像
+                Image img = ImageIO.read(inputStream);
+                return new ImageIcon(img);  // 返回图标
+            } else {
+                System.out.println("Resource not found: " + path);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;  // 如果加载失败，则返回 null
+    }
 
 }

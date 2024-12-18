@@ -2,8 +2,6 @@ package core;
 
 import util.*;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,22 +23,6 @@ public class FileSys {
         fats = new FAT[128];
         fats[0] = new FAT(255, "Disk", null);
         fats[1] = new FAT(255, "Disk", new Disk("C"));
-        writeFatsToFile("src/res/fats.txt");
-    }
-
-    // 将磁盘使用情况写入文件
-    public void writeFatsToFile(String filePath) {
-        try(FileWriter writer = new FileWriter(filePath)) {
-            for (int i = 0; i < fats.length; i++) {
-                if (fats[i] != null) {
-                    writer.write(String.format("(%d, %d)\n", i, fats[i].getIndex()));
-                } else {
-                    writer.write(String.format("(%d, %d)\n", i, 0));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // 返回空闲磁盘块的序列号
@@ -73,7 +55,6 @@ public class FileSys {
             }
         }
         fats[diskNum] = new FAT(255, "File", new File(fileName, diskNum, property, path));
-        writeFatsToFile("src/res/fats.txt");
         return true;
     }
 
@@ -95,7 +76,6 @@ public class FileSys {
             }
         }
         fats[diskNum] = new FAT(255, "Folder", new Folder(folderName, diskNum, path));
-        writeFatsToFile("src/res/fats.txt");
         TREE.addNode(TREE.getCurrentNode(), folderName);
         return true;
     }
@@ -132,11 +112,9 @@ public class FileSys {
         if (Objects.equals(fat.getType(), "File")) {
             File file = (File) fat.getObject();
             fats[file.getDiskNum()] = null;
-            writeFatsToFile("src/res/fats.txt");
         } else if (Objects.equals(fat.getType(), "Folder")) {
             Folder folder = (Folder) fat.getObject();
             fats[folder.getDiskNum()] = null;
-            writeFatsToFile("src/res/fats.txt");
         }
     }
 
@@ -202,7 +180,6 @@ public class FileSys {
                     fats[newStart].setIndex(newStart1);
                 }
             }
-            writeFatsToFile("src/res/fats.txt");
             return true;
         } else {
             return true;
